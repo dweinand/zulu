@@ -1,7 +1,9 @@
 require "slop"
-require "pp"
+require "rack"
+require "reel"
 
 require "zulu/version"
+require "zulu/server"
 
 module Zulu
   DEFAULTS = {
@@ -42,6 +44,18 @@ module Zulu
     end
   rescue Slop::Error => e
     abort "ERROR: #{e.message}"
+  end
+  
+  def self.run
+    if options[:servers] > 0
+      run_servers
+    end
+  end
+  
+  def self.run_servers
+    Rack::Handler::Reel.run Zulu::Server, port: options[:port],
+                                          host: options[:host],
+                                          workers: options[:servers]
   end
   
 end

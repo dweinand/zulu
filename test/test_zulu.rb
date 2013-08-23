@@ -1,6 +1,6 @@
 require 'minitest_helper'
 
-class TestZulu < MiniTest::Unit::TestCase
+class TestZulu < MiniTest::Test
   def setup
     Zulu.options = nil
   end
@@ -34,7 +34,7 @@ class TestZulu < MiniTest::Unit::TestCase
   end
   
   def test_it_has_default_option_for_keeper
-    refute Zulu.options[:keeper]
+    deny Zulu.options[:keeper]
   end
   
   def test_it_accepts_option_for_port
@@ -68,7 +68,10 @@ class TestZulu < MiniTest::Unit::TestCase
   end
   
   def test_it_aborts_on_option_with_missing_arg
-    assert_raises(SystemExit) { Zulu.parse_options(['-p']) }
+    assert_raises(SystemExit) do
+      out, err = capture_io { Zulu.parse_options(['-p']) }
+      assert_match /ERROR:/, err
+    end
   end
   
   # 

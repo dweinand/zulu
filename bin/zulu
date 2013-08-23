@@ -3,3 +3,4 @@
 require 'zulu'
 
 Zulu.parse_options
+Zulu.run
