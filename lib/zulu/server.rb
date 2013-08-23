@@ -4,6 +4,10 @@ module Zulu
   class Server < Sinatra::Base
     CONTENT_TYPES = ['application/x-www-form-urlencoded']
     
+    get '/' do
+      Time.now.utc.xmlschema
+    end
+    
     post '/' do
       if valid_content_type?
         process_subscription

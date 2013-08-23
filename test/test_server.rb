@@ -16,6 +16,12 @@ class TestServer < MiniTest::Test
     }.merge(opts)
   end
   
+  def test_it_renders_current_time_on_get
+    now = Time.now.utc
+    get '/'
+    assert_equal now.xmlschema, last_response.body
+  end
+  
   def test_it_accepts_subscription_request
     post '/', subscribe_options
     assert_equal 202, last_response.status, last_response.body
