@@ -19,6 +19,21 @@ class TestSubscriptionRequest < MiniTest::Test
     SubscriptionRequest.new(subscribe_options(opts))
   end
   
+  def test_it_pops_the_next_request
+    request = subscribe_request
+    request.save
+    assert_equal request, SubscriptionRequest.pop
+  end
+  
+  def test_it_accepts_timeout_for_pop
+    mock = MiniTest::Mock.new
+    mock.expect(:brpop, nil, [SubscriptionRequest::LIST, timeout: 5])
+    Zulu.stub(:redis, mock) do
+      SubscriptionRequest.pop(5)
+    end
+    mock.verify
+  end
+  
   def test_it_is_valid_with_subscribe
     assert subscribe_request.valid?
   end

@@ -6,6 +6,11 @@ module Zulu
   class SubscriptionRequest
     LIST = "subscription_requests".freeze
     
+    def self.pop(timeout=nil)
+      _, params = Zulu.redis.brpop(LIST, timeout: timeout)
+      params and new(Oj.load(params))
+    end
+    
     def initialize(params)
       @mode     = params['hub.mode']
       @topic    = params['hub.topic']
@@ -60,6 +65,10 @@ module Zulu
     
     def to_json
       Oj.dump(to_hash)
+    end
+    
+    def ==(other)
+      to_hash == other.to_hash
     end
     
   end
