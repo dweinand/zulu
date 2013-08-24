@@ -1,5 +1,7 @@
 # Zulu
 
+[![Build Status](https://travis-ci.org/dweinand/zulu.png?branch=master)](https://travis-ci.org/dweinand/zulu)
+
 Zulu is standalone PuSH-inspired service for scheduling web hook execution.
 
 ## Installation
