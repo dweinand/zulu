@@ -33,7 +33,7 @@ class TestServer < MiniTest::Test
   
   def test_it_errors_if_save_fails
     post '/', subscribe_options('hub.mode' => 'dance')
-    assert_equal 422, last_response.status, last_response.body
+    assert_equal 400, last_response.status, last_response.body
   end
   
   def test_it_displays_errors_if_save_fails

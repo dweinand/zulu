@@ -21,7 +21,7 @@ module Zulu
       if request.save
         status 202
       else
-        error 422, request.error_messages.join("\n")
+        error 400, request.error_messages.join("\n")
       end
     end
     
