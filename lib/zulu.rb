@@ -17,7 +17,7 @@ module Zulu
     workers: 5,
     database: "redis://127.0.0.1:6379",
     keeper: false
-  }
+  }.freeze
   
   def self.options
     @options ||= DEFAULTS.dup
