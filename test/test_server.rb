@@ -38,7 +38,7 @@ class TestServer < MiniTest::Test
   
   def test_it_displays_errors_if_save_fails
     post '/', subscribe_options('hub.mode' => nil)
-    errs = "hub.mode must be present\nhub.mode must be either 'subscribe' or 'unsubscribe'"
+    errs = "hub.mode must be present\nhub.mode must be either subscribe or unsubscribe"
     assert_equal errs, last_response.body
   end
   

@@ -59,7 +59,7 @@ class TestSubscriptionRequest < MiniTest::Test
   def test_it_has_error_with_wrong_mode
     request = subscribe_request('hub.mode' => 'dance')
     request.valid?
-    assert_includes request.errors, [:mode, "must be either 'subscribe' or 'unsubscribe'"]
+    assert_includes request.errors, [:mode, "must be either subscribe or unsubscribe"]
   end
   
   def test_it_is_not_valid_with_missing_topic

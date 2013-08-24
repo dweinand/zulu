@@ -5,6 +5,11 @@ require "oj"
 module Zulu
   class SubscriptionRequest
     LIST = "subscription_requests".freeze
+    MODES = %w(subscribe unsubscribe).freeze
+    
+    def self.push(request)
+      Zulu.redis.lpush(LIST, request.to_json)
+    end
     
     def self.pop(timeout=nil)
       _, params = Zulu.redis.brpop(LIST, timeout: timeout)
@@ -35,7 +40,7 @@ module Zulu
     end
     
     def save
-      valid? and Zulu.redis.lpush(LIST, to_json)
+      valid? and self.class.push(self)
     end
     
     def to_hash
@@ -57,8 +62,8 @@ module Zulu
     
     def validate_mode
       @mode or errors << [:mode, 'must be present']
-      in_list = ['subscribe','unsubscribe'].include?(@mode)
-      in_list or errors << [:mode, "must be either 'subscribe' or 'unsubscribe'"]
+      in_list = MODES.include?(@mode)
+      in_list or errors << [:mode, "must be either #{MODES.join(' or ')}"]
     end
     
     def validate_topic
