@@ -41,7 +41,7 @@ class TestSubscriptionRequest < MiniTest::Test
     deny subscribe_request('hub.mode' => 'dance').valid?
   end
   
-  def test_it_has_error_with_missing_mode
+  def test_it_has_error_with_wrong_mode
     request = subscribe_request('hub.mode' => 'dance')
     request.valid?
     assert_includes request.errors, [:mode, "must be either 'subscribe' or 'unsubscribe'"]
@@ -65,6 +65,16 @@ class TestSubscriptionRequest < MiniTest::Test
     request = subscribe_request('hub.callback' => nil)
     request.valid?
     assert_includes request.errors, [:callback, 'must be present']
+  end
+  
+  def test_it_is_not_valid_with_wrong_callback
+    deny subscribe_request('hub.callback' => '!?/#:-)').valid?
+  end
+  
+  def test_it_has_error_with_wrong_callback
+    request = subscribe_request('hub.callback' => '!?/#:-)')
+    request.valid?
+    assert_includes request.errors, [:callback, "must be a valid http url"]
   end
   
   def test_it_contructs_proper_error_messages

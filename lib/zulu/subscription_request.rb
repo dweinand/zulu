@@ -1,3 +1,7 @@
+require "addressable/uri"
+require "oj"
+
+
 module Zulu
   class SubscriptionRequest
     LIST = "subscription_requests".freeze
@@ -37,6 +41,10 @@ module Zulu
     
     def validate_callback
       @callback or errors << [:callback, 'must be present']
+      uri = Addressable::URI.parse(@callback)
+      uri and %w(http https).include? uri.scheme or fail Addressable::URI::InvalidURIError
+    rescue Addressable::URI::InvalidURIError
+      errors << [:callback, 'must be a valid http url']
     end
     
     def save

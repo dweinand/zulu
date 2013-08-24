@@ -3,7 +3,6 @@ require "rack"
 require "reel"
 require "redis"
 require "celluloid/redis"
-require "oj"
 
 require "zulu/version"
 require "zulu/server"
