@@ -8,6 +8,10 @@ class TestServer < MiniTest::Test
     Server
   end
   
+  def teardown
+    Zulu.redis.flushall
+  end
+  
   def subscribe_options(opts={})
     {
       'hub.mode' => 'subscribe',
@@ -25,6 +29,17 @@ class TestServer < MiniTest::Test
   def test_it_accepts_subscription_request
     post '/', subscribe_options
     assert_equal 202, last_response.status, last_response.body
+  end
+  
+  def test_it_errors_if_save_fails
+    post '/', subscribe_options('hub.mode' => 'dance')
+    assert_equal 422, last_response.status, last_response.body
+  end
+  
+  def test_it_displays_errors_if_save_fails
+    post '/', subscribe_options('hub.mode' => nil)
+    errs = "hub.mode must be present\nhub.mode must be either 'subscribe' or 'unsubscribe'"
+    assert_equal errs, last_response.body
   end
   
   def test_it_wont_accept_incorrect_format

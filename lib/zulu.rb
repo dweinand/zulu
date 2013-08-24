@@ -1,9 +1,13 @@
 require "slop"
 require "rack"
 require "reel"
+require "redis"
+require "celluloid/redis"
+require "oj"
 
 require "zulu/version"
 require "zulu/server"
+require "zulu/subscription_request"
 
 module Zulu
   DEFAULTS = {
@@ -11,7 +15,7 @@ module Zulu
     host: "0.0.0.0",
     servers: 0,
     workers: 5,
-    database: "localhost:6379",
+    database: "redis://127.0.0.1:6379",
     keeper: false
   }
   
@@ -34,7 +38,7 @@ module Zulu
       on :o, :host, 'Listen on HOST (default: 0.0.0.0)', argument: true
       on :s, :servers, 'Run SERVERS server workers (default: 0)', argument: true, as: Integer
       on :w, :workers, 'Run WORKERS background workers (default: 5)', argument: true, as: Integer
-      on :d, :database, "Connect to DATABASE (default: localhost:6379)", argument: true
+      on :d, :database, "Connect to DATABASE (default: redis://127.0.0.1:6379)", argument: true
       on :k, :keeper, "Run a keeper worker (default: false)"
     end
     opts.each do |option|
@@ -56,6 +60,10 @@ module Zulu
     Rack::Handler::Reel.run Zulu::Server, port: options[:port],
                                           host: options[:host],
                                           workers: options[:servers]
+  end
+  
+  def self.redis
+    Thread.current[:redis] ||= Redis.new(url: options[:database], driver: :celluloid)
   end
   
 end

@@ -30,7 +30,7 @@ class TestZulu < MiniTest::Test
   end
   
   def test_it_has_default_option_for_database
-    assert_equal 'localhost:6379', Zulu.options[:database]
+    assert_equal "redis://127.0.0.1:6379", Zulu.options[:database]
   end
   
   def test_it_has_default_option_for_keeper
@@ -58,8 +58,8 @@ class TestZulu < MiniTest::Test
   end
   
   def test_it_accepts_option_for_database
-    Zulu.parse_options(['-d localhost:9000'])
-    assert_equal 'localhost:9000', Zulu.options[:database]
+    Zulu.parse_options(['-d redis://localhost:9000'])
+    assert_equal 'redis://localhost:9000', Zulu.options[:database]
   end
   
   def test_it_accepts_option_for_keeper
@@ -75,7 +75,11 @@ class TestZulu < MiniTest::Test
   end
   
   # 
-  # Zulu.run
+  # Zulu.redis
   # 
+  
+  def test_it_creates_redis_connection
+    assert_kind_of Redis, Zulu.redis
+  end
   
 end

@@ -12,12 +12,17 @@ module Zulu
       if valid_content_type?
         process_subscription
       else
-        status 406
+        error 406
       end
     end
     
     def process_subscription
-      status 202
+      request = SubscriptionRequest.new(params)
+      if request.save
+        status 202
+      else
+        error 422, request.error_messages.join("\n")
+      end
     end
     
     def valid_content_type?
