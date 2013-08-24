@@ -5,6 +5,7 @@ class TestSubscriptionRequest < MiniTest::Test
   
   def teardown
     Zulu.redis.flushall
+    WebMock.reset!
   end
   
   def subscribe_options(opts={})
