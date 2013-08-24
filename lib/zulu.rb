@@ -7,6 +7,7 @@ require "celluloid/redis"
 require "zulu/version"
 require "zulu/server"
 require "zulu/subscription_request"
+require "zulu/challenge"
 
 module Zulu
   DEFAULTS = {
