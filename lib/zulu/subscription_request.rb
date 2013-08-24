@@ -58,6 +58,15 @@ module Zulu
       to_hash == other.to_hash
     end
     
+    def verify
+      challenge = Challenge.new
+      params = to_hash
+      params['hub.challenge'] = challenge
+      uri = Addressable::URI.parse(@callback)
+      response = Net::HTTP.post_form(uri, params)
+      response.code == "200" && response.body == challenge
+    end
+    
     private
     
     def validate_mode
