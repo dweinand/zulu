@@ -159,4 +159,24 @@ class TestSubscriptionRequest < MiniTest::Test
     deny subscribe_request.verify
   end
   
+  def test_it_creates_subscription_on_subscribe
+    mock = MiniTest::Mock.new
+    mock.expect(:save, true)
+    request = subscribe_request
+    Subscription.stub(:new, mock) do
+      request.perform
+    end
+    mock.verify
+  end
+  
+  def test_it_destroys_subscription_on_unsubscribe
+    mock = MiniTest::Mock.new
+    mock.expect(:destroy, true)
+    request = subscribe_request('hub.mode' => 'unsubscribe')
+    Subscription.stub(:new, mock) do
+      request.perform
+    end
+    mock.verify
+  end
+  
 end

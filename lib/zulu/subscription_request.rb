@@ -67,6 +67,16 @@ module Zulu
       response.code == "200" && response.body == challenge
     end
     
+    def perform
+      subscription = Subscription.new(topic: @topic, callback: @callback)
+      case @mode
+      when 'subscribe'
+        subscription.save
+      when 'unsubscribe'
+        subscription.destroy
+      end
+    end
+    
     private
     
     def validate_mode
