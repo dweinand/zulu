@@ -3,12 +3,15 @@ require "rack"
 require "reel"
 require "redis"
 require "celluloid/redis"
+require "logger"
 
 require "zulu/version"
-require "zulu/server"
-require "zulu/subscription_request"
-require "zulu/subscription"
 require "zulu/challenge"
+require "zulu/server"
+require "zulu/subscription"
+require "zulu/subscription_request"
+require "zulu/subscription_request_processor"
+
 
 module Zulu
   DEFAULTS = {
@@ -52,15 +55,40 @@ module Zulu
   end
   
   def self.run
-    if options[:servers] > 0
-      run_servers
-    end
+    run_workers if options[:workers] > 0
+    run_servers if options[:servers] > 0
+    sleep
+  rescue Interrupt
+    stop
+  end
+  
+  def self.stop
+    stop_servers if options[:servers] > 0
+    stop_workers if options[:workers] > 0
+    exit
   end
   
   def self.run_servers
     Rack::Handler::Reel.run Zulu::Server, port: options[:port],
                                           host: options[:host],
                                           workers: options[:servers]
+  end
+  
+  def self.stop_servers
+    Celluloid::Actor[:reel_server].terminate if Celluloid::Actor[:reel_server]
+    Celluloid::Actor[:reel_rack_pool].terminate if Celluloid::Actor[:reel_rack_pool]
+  end
+  
+  def self.run_workers
+    Celluloid::Actor[:worker_supervisor] = Celluloid::SupervisionGroup.run!
+    Celluloid::Actor[:worker_supervisor].pool(SubscriptionRequestProcessor,
+                            as: :request_processors,
+                            size: options[:workers])
+    Celluloid::Actor[:request_processors].async.process
+  end
+  
+  def self.stop_workers
+    Celluloid::Actor[:worker_supervisor].terminate if Celluloid::Actor[:worker_supervisor]
   end
   
   def self.redis

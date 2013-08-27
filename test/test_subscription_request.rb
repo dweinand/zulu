@@ -132,20 +132,20 @@ class TestSubscriptionRequest < MiniTest::Test
   def test_it_requests_callback_on_verify
     challenge = 'foobar'
     request = subscribe_request
-    stub_post = stub_http_request(:post, "www.example.org/callback").
-      with(body: subscribe_options('hub.challenge' => challenge)).
+    stub_get = stub_http_request(:get, "www.example.org/callback").
+      with(query: subscribe_options('hub.challenge' => challenge)).
       to_return(body: challenge)
     Challenge.stub(:new, challenge) do
       request.verify
     end
-    assert_requested stub_post
+    assert_requested stub_get
   end
   
   def test_it_passes_on_good_verify
     challenge = 'foobar'
     request = subscribe_request
-    stub_post = stub_http_request(:post, "www.example.org/callback").
-      with(body: subscribe_options('hub.challenge' => challenge)).
+    stub_get = stub_http_request(:get, "www.example.org/callback").
+      with(query: subscribe_options('hub.challenge' => challenge)).
       to_return(body: challenge)
     Challenge.stub(:new, challenge) do
       assert request.verify
@@ -153,8 +153,8 @@ class TestSubscriptionRequest < MiniTest::Test
   end
   
   def test_it_fails_on_bad_verify
-    stub_post = stub_http_request(:post, "www.example.org/callback").
-      with(body: hash_including(subscribe_options)).
+    stub_get = stub_http_request(:get, "www.example.org/callback").
+      with(query: hash_including(subscribe_options)).
       to_return(status: [404, "Not Found"])
     deny subscribe_request.verify
   end
@@ -163,8 +163,21 @@ class TestSubscriptionRequest < MiniTest::Test
     mock = MiniTest::Mock.new
     mock.expect(:save, true)
     request = subscribe_request
-    Subscription.stub(:new, mock) do
-      request.perform
+    request.stub(:verify, true) do
+      Subscription.stub(:new, mock) do
+        request.process
+      end
+    end
+    mock.verify
+  end
+  
+  def test_it_does_not_create_subscription_if_verify_fails
+    mock = MiniTest::Mock.new
+    request = subscribe_request
+    request.stub(:verify, false) do
+      Subscription.stub(:new, mock) do
+        request.process
+      end
     end
     mock.verify
   end
@@ -173,8 +186,21 @@ class TestSubscriptionRequest < MiniTest::Test
     mock = MiniTest::Mock.new
     mock.expect(:destroy, true)
     request = subscribe_request('hub.mode' => 'unsubscribe')
-    Subscription.stub(:new, mock) do
-      request.perform
+    request.stub(:verify, true) do
+      Subscription.stub(:new, mock) do
+        request.process
+      end
+    end
+    mock.verify
+  end
+  
+  def test_it_does_not_destroy_subscription_if_verify_fails
+    mock = MiniTest::Mock.new
+    request = subscribe_request('hub.mode' => 'unsubscribe')
+    request.stub(:verify, false) do
+      Subscription.stub(:new, mock) do
+        request.process
+      end
     end
     mock.verify
   end

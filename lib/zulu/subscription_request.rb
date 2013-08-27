@@ -63,7 +63,8 @@ module Zulu
       params = to_hash
       params['hub.challenge'] = challenge
       uri = Addressable::URI.parse(@callback)
-      response = Net::HTTP.post_form(uri, params)
+      uri.query = URI.encode_www_form(params)
+      response = Net::HTTP.get_response(uri)
       response.code == "200" && response.body == challenge
     end
     
@@ -75,6 +76,10 @@ module Zulu
       when 'unsubscribe'
         subscription.destroy
       end
+    end
+    
+    def process
+      verify and perform
     end
     
     private
