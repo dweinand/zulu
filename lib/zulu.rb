@@ -47,8 +47,9 @@ module Zulu
     end
     opts.each do |option|
       next unless option.value
-      option.value.is_a?(String) and option.value.strip!
-      options[option.key.to_sym] = option.value
+      value = option.value
+      value = value.strip if value.is_a?(String)
+      options[option.key.to_sym] = value
     end
   rescue Slop::Error => e
     abort "ERROR: #{e.message}"
