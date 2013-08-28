@@ -31,17 +31,13 @@ class TestSubscription < MiniTest::Test
   def test_it_calculates_next_time
     topic = Topic.new(topic_options_without_id)
     now = Time.new(2013,8,1)
-    Time.stub(:now, now) do
-      assert_equal now + 15 * 60, topic.next_time
-    end
+    assert_equal now + 15 * 60, topic.next_time(now)
   end
   
   def test_it_stores_next_time_on_reset
     topic = Topic.new(topic_options_without_id)
     now = Time.new(2013,8,1)
-    Time.stub(:now, now) do
-      topic.reset_next
-    end
+    topic.reset_next(now)
     topic_next = Zulu.redis.zscore Topic::UPCOMING_KEY, topic_id
     assert_equal (now + 15 * 60).to_i, topic_next
   end

@@ -45,12 +45,12 @@ module Zulu
       @parser ||= Rufus::CronLine.new(topic)
     end
     
-    def next_time
-      parser.next_time(Time.now)
+    def next_time(now=Time.now)
+      parser.next_time(now)
     end
     
-    def reset_next
-      Zulu.redis.zadd(UPCOMING_KEY, next_time.to_i, id)
+    def reset_next(now=Time.now)
+      Zulu.redis.zadd(UPCOMING_KEY, next_time(now).to_i, id)
     end
     
     def save
