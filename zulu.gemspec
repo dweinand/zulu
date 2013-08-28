@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "celluloid-redis", "~> 0.0.2"
   spec.add_dependency "oj", "~> 2.1.4"
   spec.add_dependency "addressable", "~> 2.3.5"
+  spec.add_dependency "rufus-scheduler", "~> 2.0.22"
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"

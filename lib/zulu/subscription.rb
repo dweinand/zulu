@@ -19,12 +19,19 @@ module Zulu
       @callback ||= Zulu.redis.get "#{KEY_PREFIX}:#{id}:callback"
     end
     
+    def topic
+      @topic_object ||= Topic.new(topic: @topic)
+    end
+    
     def save
       Zulu.redis.set "#{KEY_PREFIX}:#{id}:callback", callback
+      topic.save
+      topic.subscribe(id)
     end
     
     def destroy
       Zulu.redis.del "#{KEY_PREFIX}:#{id}:callback"
+      topic.unsubscribe(id)
     end
     
   end
