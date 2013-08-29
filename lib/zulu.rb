@@ -7,6 +7,7 @@ require "logger"
 
 require "zulu/version"
 require "zulu/challenge"
+require "zulu/keeper"
 require "zulu/server"
 require "zulu/subscription"
 require "zulu/subscription_request"
@@ -56,6 +57,7 @@ module Zulu
   end
   
   def self.run
+    run_keeper  if options[:keeper]
     run_workers if options[:workers] > 0
     run_servers if options[:servers] > 0
     sleep
@@ -64,9 +66,19 @@ module Zulu
   end
   
   def self.stop
+    stop_keeper  if options[:keeper]
     stop_servers if options[:servers] > 0
     stop_workers if options[:workers] > 0
     exit
+  end
+  
+  def self.run_keeper
+    Keeper.supervise_as :keeper
+    Celluloid::Actor[:keeper].async.start
+  end
+  
+  def self.stop_keeper
+    Celluloid::Actor[:keeper].terminate if Celluloid::Actor[:worker_supervisor]
   end
   
   def self.run_servers
