@@ -13,6 +13,7 @@ require "zulu/subscription"
 require "zulu/subscription_request"
 require "zulu/subscription_request_processor"
 require "zulu/topic"
+require "zulu/topic_distribution"
 
 module Zulu
   DEFAULTS = {

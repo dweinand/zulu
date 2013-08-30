@@ -11,6 +11,10 @@ module Zulu
       @callback = options[:callback]
     end
     
+    def ==(other)
+      id == other.id
+    end
+    
     def id
       @id ||= Digest::MD5.hexdigest [@topic, @callback].join(':')
     end

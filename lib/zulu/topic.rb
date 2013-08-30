@@ -16,6 +16,10 @@ module Zulu
       @topic    = options[:topic]
     end
     
+    def ==(other)
+      id == other.id
+    end
+    
     def id
       @id ||= Digest::MD5.hexdigest @topic
     end
