@@ -37,6 +37,10 @@ class TestZulu < MiniTest::Test
     deny Zulu.options[:keeper]
   end
   
+  def test_it_has_default_option_for_interval
+    assert_equal 5, Zulu.options[:interval]
+  end
+  
   def test_it_accepts_option_for_port
     Zulu.parse_options(['-p 3000'])
     assert_equal 3000, Zulu.options[:port]
@@ -65,6 +69,11 @@ class TestZulu < MiniTest::Test
   def test_it_accepts_option_for_keeper
     Zulu.parse_options(['-k'])
     assert Zulu.options[:keeper]
+  end
+  
+  def test_it_accepts_option_for_interval
+    Zulu.parse_options(['-i 30'])
+    assert_equal 30, Zulu.options[:interval]
   end
   
   def test_it_aborts_on_option_with_missing_arg

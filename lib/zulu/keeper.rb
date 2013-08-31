@@ -3,8 +3,6 @@ module Zulu
     include Celluloid::IO
     include Celluloid::Logger
     
-    TICK_INTERVAL = 5
-    
     def tick(now=Time.now)
       debug "Looking for topics at: #{now} (#{now.to_i})"
       count = 0
@@ -20,7 +18,7 @@ module Zulu
     end
     
     def start
-      every(TICK_INTERVAL) { tick }
+      every(Zulu.options[:interval]) { tick }
     end
   end
 end

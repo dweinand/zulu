@@ -22,7 +22,8 @@ module Zulu
     servers: 0,
     workers: 5,
     database: "redis://127.0.0.1:6379",
-    keeper: false
+    keeper: false,
+    interval: 5
   }.freeze
   
   def self.options
@@ -46,6 +47,7 @@ module Zulu
       on :w, :workers, 'Run WORKERS background workers (default: 5)', argument: true, as: Integer
       on :d, :database, "Connect to DATABASE (default: redis://127.0.0.1:6379)", argument: true
       on :k, :keeper, "Run a keeper worker (default: false)"
+      on :i, :interval, 'Check time every INTERVAL seconds (default: 5)', argument: true, as: Integer
     end
     opts.each do |option|
       next unless option.value
