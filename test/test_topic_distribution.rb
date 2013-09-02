@@ -66,4 +66,16 @@ class TestTopicDistribution < MiniTest::Test
     distribution.save
     assert_equal distribution.to_json, Zulu.redis.rpop(TopicDistribution::LIST)
   end
+  
+  def test_it_posts_to_subscription_callback
+    distribution = topic_distribution
+    subscription = MiniTest::Mock.new
+    subscription.expect(:callback, 'www.example.com')
+    Http.stub(:post, true) do
+      distribution.stub(:subscriptions, [subscription]) do
+        distribution.process
+      end
+    end
+    subscription.verify
+  end
 end

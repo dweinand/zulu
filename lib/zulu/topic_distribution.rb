@@ -44,5 +44,11 @@ module Zulu
       self.class.push(self)
     end
     
+    def process
+      subscriptions.each do |subscription|
+        Http.post(subscription.callback, form: {now: now})
+      end
+    end
+    
   end
 end

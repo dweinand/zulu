@@ -15,6 +15,7 @@ require "zulu/subscription_request"
 require "zulu/subscription_request_processor"
 require "zulu/topic"
 require "zulu/topic_distribution"
+require "zulu/topic_distribution_processor"
 
 module Zulu
   DEFAULTS = {
@@ -101,7 +102,11 @@ module Zulu
     Celluloid::Actor[:worker_supervisor].pool(SubscriptionRequestProcessor,
                             as: :request_processors,
                             size: options[:workers])
+    Celluloid::Actor[:worker_supervisor].pool(TopicDistributionProcessor,
+                            as: :distribution_processors,
+                            size: options[:workers])
     Celluloid::Actor[:request_processors].async.process
+    Celluloid::Actor[:distribution_processors].async.process
   end
   
   def self.stop_workers
