@@ -21,9 +21,11 @@ class TestServer < MiniTest::Test
   end
   
   def test_it_renders_current_time_on_get
-    now = Time.now.utc
-    get '/'
-    assert_equal now.xmlschema, last_response.body
+    now = Time.now
+    Time.stub(:now, now) do
+      get '/'
+    end
+    assert_equal now.utc.xmlschema, last_response.body
   end
   
   def test_it_accepts_subscription_request
