@@ -20,6 +20,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "slop", "~> 3.4.6"
   spec.add_dependency "sinatra", "~> 1.4.3"
+  spec.add_dependency "celluloid", "~> 0.14.1"
   spec.add_dependency "celluloid-io", "~> 0.14.1"
   spec.add_dependency "reel", "~> 0.3.0"
   spec.add_dependency "celluloid-redis", "~> 0.0.2"
