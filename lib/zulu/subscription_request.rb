@@ -62,9 +62,7 @@ module Zulu
       challenge = Challenge.new
       params = to_hash
       params['hub.challenge'] = challenge
-      uri = Addressable::URI.parse(@callback)
-      uri.query = URI.encode_www_form(params)
-      response = Net::HTTP.get_response(uri)
+      response = Http.get(@callback, params: params)
       response.code == "200" && response.body == challenge
     end
     

@@ -5,7 +5,6 @@ class TestSubscriptionRequest < MiniTest::Test
   
   def teardown
     Zulu.redis.flushall
-    WebMock.reset!
   end
   
   def subscribe_options(opts={})
@@ -132,31 +131,36 @@ class TestSubscriptionRequest < MiniTest::Test
   def test_it_requests_callback_on_verify
     challenge = 'foobar'
     request = subscribe_request
-    stub_get = stub_http_request(:get, "www.example.org/callback").
-      with(query: subscribe_options('hub.challenge' => challenge)).
-      to_return(body: challenge)
-    Challenge.stub(:new, challenge) do
-      request.verify
+    response = MiniTest::Mock.new
+    response.expect(:code, "200")
+    response.expect(:body, challenge)
+    Http.stub(:get, response) do
+      Challenge.stub(:new, challenge) do
+        request.verify
+      end
     end
-    assert_requested stub_get
+    response.verify
   end
   
   def test_it_passes_on_good_verify
     challenge = 'foobar'
     request = subscribe_request
-    stub_get = stub_http_request(:get, "www.example.org/callback").
-      with(query: subscribe_options('hub.challenge' => challenge)).
-      to_return(body: challenge)
-    Challenge.stub(:new, challenge) do
-      assert request.verify
+    response = MiniTest::Mock.new
+    response.expect(:code, "200")
+    response.expect(:body, challenge)
+    Http.stub(:get, response) do
+      Challenge.stub(:new, challenge) do
+        assert request.verify
+      end
     end
   end
   
   def test_it_fails_on_bad_verify
-    stub_get = stub_http_request(:get, "www.example.org/callback").
-      with(query: hash_including(subscribe_options)).
-      to_return(status: [404, "Not Found"])
-    deny subscribe_request.verify
+    response = MiniTest::Mock.new
+    response.expect(:code, "404")
+    Http.stub(:get, response) do
+      deny subscribe_request.verify
+    end
   end
   
   def test_it_creates_subscription_on_subscribe

@@ -7,6 +7,7 @@ require "logger"
 
 require "zulu/version"
 require "zulu/challenge"
+require "zulu/http"
 require "zulu/keeper"
 require "zulu/server"
 require "zulu/subscription"

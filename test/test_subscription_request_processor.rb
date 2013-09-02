@@ -5,7 +5,6 @@ class TestSubscriptionRequestProcessor < MiniTest::Test
   
   def teardown
     Zulu.redis.flushall
-    WebMock.reset!
   end
   
   def test_it_processes_request

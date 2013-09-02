@@ -5,7 +5,6 @@ require 'minitest/autorun'
 require 'minitest/pride'
 require 'minitest/english/deny'
 require 'rack/test'
-require "webmock/minitest"
 
 require 'celluloid/autostart'
 require 'zulu'
