@@ -12,7 +12,7 @@ class TestChallenge < MiniTest::Test
   end
   
   def test_it_produces_appropriate_string
-    assert_match /[a-zA-Z0-9]/, Challenge.new
+    assert_match /^[a-zA-Z0-9]+$/, Challenge.new
   end
   
 end
